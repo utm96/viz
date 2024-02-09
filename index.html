@@ -4,12 +4,39 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>p5.js example</title>
+  <title>Impact of Generative AI on Jobs</title>
   <style>
     body {
       padding: 0;
       margin: 0;
       background-color: #1b1b1b;
+      font-family: 'Arial', sans-serif;
+    }
+
+    main {
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    p {
+      line-height: 1.5;
+    }
+
+    u {
+      text-decoration: underline;
+    }
+
+    .viz-container {
+      margin: 20px 100px;
+      background-color: aliceblue;
+      color: black;
+      border-radius: 5px;
+      padding: 20px;
     }
   </style>
   <script src="./p5.js"></script>
@@ -18,16 +45,15 @@
 </head>
 
 <body>
-  <main style="color:white; text-align: center;">
+  <main>
     <h1>Impact of Generative AI on Jobs</h1>
-    <div style="margin-bottom: 10px;">
+    <div>
       <p><u>Research question:</u> What portion of tasks in a given job role are automated and which ones still require
         human intervention due to the integration of generative AI models in different industries?</p>
-        <span><u>Viz title:</u> Job Vision</span>
-        <p><span><u>Source</u>: Code is customized from p5's example (https://editor.p5js.org/isob/sketches/QfXb51UPM)</span></p>
-
+      <span><u>Viz title:</u> Job Vision</span>
+      <p><span><u>Source</u>: Code is customized from p5's example (<a href="https://editor.p5js.org/isob/sketches/QfXb51UPM" target="_blank">source</a>)</span></p>
     </div>
-    <div style="margin: 0px 100px;background-color: aliceblue; color: black; border-radius: 5px; padding: 10px;">
+    <div class="viz-container">
       <p><u>Description:</u></p>
       <p>Each rectangle in this visualization represents a unique domain. The size of the rectangle is based on the total of tasks in that domain. Within each domain, various job roles are depicted, and the impact of AI on each domain is illustrated through color coding. The intensity of the color corresponds to the level of AI impact in percentage terms. A lighter shade indicates a lesser impact of AI on that domain, suggesting that AI has not significantly altered or automated the job roles within. Conversely, a darker shade signifies a higher impact, indicating that AI has a substantial influence or automation potential in that particular domain. </p>
     </div>
