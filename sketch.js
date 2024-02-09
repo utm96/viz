@@ -1,17 +1,19 @@
 let task_by_domain = {}
+let task_automated_by_domain = {}
+
 let sorted_domain = []
 let total_task = 0;
 
-let listColor = ['#FF0000',
-  '#FF3300',
-  '#FF6600',
-  '#FF9900',
-  '#FFCC00',
-  '#FFBF00',
-  '#FF8000',
-  '#FF4D00',
-  '#FF1A00',
-  '#FF0033']
+let listColor = ['#FFFAFA',
+  '#FFE4E1',
+  '#ECCFCF',
+  '#F7BFBE',
+  '#F7BFBE',
+  '#F08F90',
+  '#FA8072',
+  '#FF6961',
+  '#F7665A',
+  '#FF0000']
 function preload() {
   /* read csv file */
   table = loadTable("./data/My_Data.csv", "csv",
@@ -45,20 +47,23 @@ function setup() {
     // Tasks']);
     if (!task_by_domain.hasOwnProperty(table.getRow(i).get('Domain'))) {
       task_by_domain[table.getRow(i).get('Domain')] = 0;
+      task_automated_by_domain[table.getRow(i).get('Domain')] = 0;
     }
     task_by_domain[table.getRow(i).get('Domain')] = Number(table.getRow(i).get('Tasks')) + task_by_domain[table.getRow(i).get('Domain')];
+    task_automated_by_domain[table.getRow(i).get('Domain')] = Number(table.getRow(i).get('Tasks'))*Number(table.getRow(i).get('AI Impact').replace('%','')) + task_automated_by_domain[table.getRow(i).get('Domain')];
+
     total_task += Number(table.getRow(i).get('Tasks'));
   }
 
   
   for (var domain in task_by_domain) {
-    sorted_domain.push([domain, task_by_domain[domain]/total_task]);
+    sorted_domain.push([domain, task_by_domain[domain]/total_task, task_automated_by_domain[domain]/task_by_domain[domain]]);
   }
 
   sorted_domain.sort(function (a, b) {
     return  b[1] - a[1];
   });
-  console.log(task_by_domain)
+  console.log(task_automated_by_domain)
   console.log(sorted_domain);
 
 
@@ -77,13 +82,11 @@ function setup() {
 //   setup();
 // }
 
-function drawRect(x1, y1, w1, h1, value) {
-  let hStart = 50 - 0.1;
-  let hEnd = 50 + 0.1;
-  // let h = random(hStart, hEnd);
-  // let s = random(7, 100);
-  // let b = random(90, 70);
-  let color =  listColor[Math.floor(Math.random() * listColor.length)];
+function drawRect(x1, y1, w1, h1, value,colorRect) {
+  console.log(colorRect);
+  // value
+  let color =  listColor[value.length%10];
+  console.log(color);
   fill(color);
   rect(x1, y1, w1, h1); 
   fill(1);
@@ -176,6 +179,8 @@ function makeBlock(refX, refY, blockW, blockH, list_domain) {
   let numbersB = [];
   let nameA;
   let nameB;
+  let colorA;
+  let colorB;
 
   // console.log("makeBlock" : +list_domain);
   for (let i = 0; i < list_domain.length; i++) {
@@ -184,11 +189,13 @@ function makeBlock(refX, refY, blockW, blockH, list_domain) {
       //numbersA[i] = numbers[i]; //we populate our new array of values, we'll send it recursivly...
       valueA += list_domain[i][1];
       nameA = list_domain[i][0];
+      colorA = list_domain[i][2];
     } else {
       numbersB = append(numbersB, list_domain[i]);
       //numbersB[i-nbItemsInABlock] = numbers[i]; //we populate our new array of values, we'll send it recursivly...
       valueB += list_domain[i][1];
       nameB = list_domain[i][0];
+      colorB = list_domain[i][2];
     }
   }
   let ratio = float(valueA) / float(valueB + valueA);
@@ -232,13 +239,13 @@ function makeBlock(refX, refY, blockW, blockH, list_domain) {
   if (numbersA.length >= 2) { //this mean there is still stuff in this arary...
     makeBlock(xA, yA, widthA, heightA, numbersA);
   } else {
-    drawRect(xA, yA, widthA, heightA, nameA);
+    drawRect(xA, yA, widthA, heightA, nameA,colorA);
   }
 
   if (numbersB.length >= 2) { //this mean there is still stuff in this arary...
     makeBlock(xB, yB, widthB, heightB, numbersB);
   } else {
-    drawRect(xB, yB, widthB, heightB, nameB);
+    drawRect(xB, yB, widthB, heightB, nameB,colorB);
   }
 
 
