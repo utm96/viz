@@ -19,7 +19,7 @@ let listColor = ['#FFFAFA',
 //     height = 500 - margin.top - margin.bottom,
 //     formatNumber = d3.format(",d"),
 //     transitioning;
-const width = 928;
+const width = 1450;
 const height = 924;
 
 const chart = d3.json("/data/data.json").then(function (data) {
