@@ -22,7 +22,7 @@ let listColor = ['#FFFAFA',
 const width = 1450;
 const height = 924;
 
-const chart = d3.json("/data/data.json").then(function (data) {
+const chart = d3.json("./data/data.json").then(function (data) {
     console.log("loaded data")
 
 
