@@ -5,24 +5,34 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Impact of Generative AI on Jobs</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+
   <style>
     body {
       padding: 0;
       margin: 0;
-      background-color: #000; /* Deep space black */
-      font-family: 'Roboto', sans-serif; /* Modern font with good legibility */
-      color: #fff; /* White text for contrast */
+      background-color: #000;
+      /* Deep space black */
+      font-family: 'Roboto', sans-serif;
+      /* Modern font with good legibility */
+      color: #fff;
+      /* White text for contrast */
     }
 
     main {
-      max-width: 800px; /* Define a reasonable max-width for centered content */
-      margin: 50px auto; /* Center content vertically and horizontally */
+      max-width: 800px;
+      /* Define a reasonable max-width for centered content */
+      margin: 50px auto;
+      /* Center content vertically and horizontally */
       padding: 20px;
     }
 
     h1 {
-      font-size: 2em; /* Increase heading size for impact */
-      font-weight: 400; /* Use regular weight for better readability */
+      font-size: 2em;
+      /* Increase heading size for impact */
+      font-weight: 400;
+      /* Use regular weight for better readability */
       margin-bottom: 20px;
     }
 
@@ -32,34 +42,42 @@
     }
 
     u {
-      text-decoration: none; /* Remove underline and use alternative styling */
-      text-shadow: 0 1px 0 #000, 0 2px 0 #000, 0 3px 0 #000; /* Subtle text shadow for depth */
+      text-decoration: none;
+      /* Remove underline and use alternative styling */
+      text-shadow: 0 1px 0 #000, 0 2px 0 #000, 0 3px 0 #000;
+      /* Subtle text shadow for depth */
     }
 
     .viz-container {
-      background-color: #222; /* Darker gray for section background */
+      background-color: #222;
+      /* Darker gray for section background */
       border-radius: 5px;
       padding: 20px;
-      margin: 20px auto; /* Center container horizontally */
+      margin: 20px auto;
+      /* Center container horizontally */
     }
 
     .domain-rect {
-      display: inline-block; /* Display rectangles inline for side-by-side layout */
+      display: inline-block;
+      /* Display rectangles inline for side-by-side layout */
       margin: 10px;
       border-radius: 5px;
       padding: 10px;
     }
 
     .impact-low {
-      background-color: #333; /* Lighter gray for lower impact */
+      background-color: #333;
+      /* Lighter gray for lower impact */
     }
 
     .impact-medium {
-      background-color: #666; /* Medium gray for medium impact */
+      background-color: #666;
+      /* Medium gray for medium impact */
     }
 
     .impact-high {
-      background-color: #999; /* Darker gray for high impact */
+      background-color: #999;
+      /* Darker gray for high impact */
     }
 
     .job-title {
@@ -73,23 +91,39 @@
       color: #ddd;
     }
   </style>
-  <script src="./p5.js"></script>
-  <script src="sketch.js"></script>
+  <!-- <script src="./p5.js"></script>
+  <script src="sketch.js"></script> -->
 </head>
 
 <body>
   <main>
     <h1>Impact of Generative AI on Jobs</h1>
     <div>
-      <p><u>Research question:</u> What portion of tasks in a given job role are automated and which ones still require human intervention due to the integration of generative AI models in different industries?</p>
+      <p><u>Research question:</u> What portion of tasks in a given job role are automated and which ones still require
+        human intervention due to the integration of generative AI models in different industries?</p>
       <span><u>Viz title:</u> Job Vision</span>
-      <p><span><u>Source</u>: Code is customized from p5's example (<a href="https://editor.p5js.org/isob/sketches/QfXb51UPM" target="_blank">source</a>)</span></p>
+      <p><span><u>Source</u>: Code is customized from p5's example (<a
+            href="https://editor.p5js.org/isob/sketches/QfXb51UPM" target="_blank">source</a>)</span></p>
     </div>
     <div class="viz-container">
       <p><u>Description:</u></p>
-      <p>Each rectangle in this visualization represents a unique domain. The size of the rectangle is based on the total of tasks in that domain. Within each domain, various job roles are depicted, and the impact of AI on each domain is illustrated through color coding. The shade of gray corresponds to the level of AI impact in percentage terms. A lighter shade indicates a lesser impact of AI on that domain, while a darker shade signifies a higher impact.</p>
-      </div>
+      <p>Each rectangle in this visualization represents a unique domain. The size of the rectangle is based on the
+        total of tasks in that domain. Within each domain, various job roles are depicted, and the impact of AI on each
+        domain is illustrated through color coding. The shade of gray corresponds to the level of AI impact in
+        percentage terms. A lighter shade indicates a lesser impact of AI on that domain, while a darker shade signifies
+        a higher impact.</p>
+    </div>
   </main>
+  <!-- The container for the treemap -->
+  <div id="treemap-container">
+    <p id="chart">
+
+  </div>
+
+
+  <script src="script.js"></script>
+
+  <!-- Your script to generate the treemap -->
 </body>
 
 </html>
