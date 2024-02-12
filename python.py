@@ -15,6 +15,17 @@ with open(csv_file_path, mode='r') as csv_file:
         row_data['value'] = row['Tasks']
         row_data['impact'] = int(row['AI Impact'].replace('%',''))
         row_data['workrate'] = row['AI_Workload_Ratio']
+        # calculate percentage of automated Tasks and human tasks
+        # int(row['Tasks'])/(1 + 1/float(row['AI_Workload_Ratio']))
+        w_AI = round(5*int(row['Tasks'])/(1 + 1/float(row['AI_Workload_Ratio'])) +  95*row_data['impact'])
+        w_human = int(row['Tasks']) - w_AI
+        row_data['w_AI'] = w_AI
+        row_data['w_human'] = w_human
+        # w_AI in percentage
+        row_data['w_AI_percent'] = round(w_AI * 100 / int(row['Tasks']))
+        # w_human in percentage
+        row_data['w_human_percent'] = 100 - row_data['w_AI_percent']
+             
         domain = row['Domain']
         if(domain in data_temp):
             data_temp[domain].append(row_data)
@@ -32,3 +43,23 @@ with open(json_file_path, mode='w') as json_file:
     json.dump(data, json_file, indent=2)
 
 print(f'Conversion completed. JSON file saved at {json_file_path}')
+
+# find max_value of w_AI in the json file
+max_value = 0
+max_value_name = ''
+for domain in data['children']:
+    for job in domain['children']:
+        if job['w_AI'] > max_value:
+            max_value = job['w_AI']
+            max_value_name = job['name']
+print(f'Max value of w_AI is {max_value} for the job {max_value_name}')
+
+# find min_value of w_AI in the json file
+min_value = max_value
+min_value_name = ''
+for domain in data['children']:
+    for job in domain['children']:
+        if job['w_AI'] < min_value:
+            min_value = job['w_AI']
+            min_value_name = job['name']
+print(f'Min value of w_AI is {min_value} for the job {min_value_name}')

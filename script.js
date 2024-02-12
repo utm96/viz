@@ -3,16 +3,11 @@ window.uniqueId = function () {
     return 'myid-' + counter++
 }
 
-let listColor = ['#FFFAFA',
-    '#FFE4E1',
-    '#ECCFCF',
-    '#F7BFBE',
-    '#F7BFBE',
-    '#F08F90',
-    '#FA8072',
-    '#FF6961',
-    '#F7665A',
-    '#FF0000']
+const colorScale = d3.scaleSequential(d3.interpolateReds)
+    .domain([500, 10000]);
+
+const colorScaleDomain = d3.scaleSequential(d3.interpolateReds)
+    .domain([1500000, 1599000]);
 // console.log('hello');
 // var margin = {top: 20, right: 0, bottom: 0, left: 0},
 //     width = 960,
@@ -22,7 +17,7 @@ let listColor = ['#FFFAFA',
 const width = 1450;
 const height = 924;
 
-const chart = d3.json("/data/data.json").then(function (data) {
+const chart = d3.json("/data/new_data.json").then(function (data) {
     console.log("loaded data")
 
 
@@ -42,8 +37,8 @@ const chart = d3.json("/data/data.json").then(function (data) {
 
     // Compute the layout.
     const hierarchy = d3.hierarchy(data)
-        .sum(d => d.value)
-        .sort((a, b) => b.value - a.value);
+        .sum(d => d.w_AI)
+        .sort((a, b) => a.value - b.value);
     console.log(hierarchy);
     const root = d3.treemap().tile(tile)(hierarchy);
 
@@ -55,20 +50,13 @@ const chart = d3.json("/data/data.json").then(function (data) {
     const format = d3.format(",d");
     const name = d => d.ancestors().reverse().map(d => d.data.name).join("/");
 
-    // Create the SVG container.
-    // const svg = d3.create("svg")
-    //     .attr("viewBox", [0.5, -30.5, width, height + 30])
-    //     .attr("width", width)
-    //     .attr("height", height + 30)
-    //     .attr("style", "max-width: 100%; height: auto;")
-    //     .style("font", "10px sans-serif");
     var svg = d3.select("#chart").append("svg")
         .attr("viewBox", [0.5, -30.5, width, height + 30])
         .attr("width", width)
         .attr("height", height + 30)
         .attr("style", "max-width: 100%; height: auto;")
         .style("font", "10px sans-serif");
-
+        
     // Display the root.
     let group = svg.append("g")
         .call(render, root);
@@ -90,16 +78,20 @@ const chart = d3.json("/data/data.json").then(function (data) {
         node.append("rect")
             .attr("id", d => (d.leafUid = window.uniqueId()))
             .attr("fill", function (d) {
-                console.log('d.data.impact: ' + d.data.impact);
-                if (d === root) return "#fff";
-                if (d.children) return "#ddd";
-                if (d.data.impact) {
-                    console.log('impact: ' + d.data.impact);
-                    return listColor[Math.ceil(d.data.impact / 10)]
+                // Check if the current node is the root or has children to apply different logic
+                if (d === root) {
+                    // Apply color shading to the root based on its w_AI value
+                    return '#fff'; // Using d.value which is the sum for the root node
+                } else if (d.children) {
+                    // Apply a different shading for parents (non-leaf nodes)
+                    return colorScaleDomain(d.value);
+                } else {
+                    // Apply color shading for leaves based on w_AI_percent
+                    return d.data.w_AI !== undefined ? colorScale(d.data.w_AI) : "#fff";
                 }
-
             })
             .attr("stroke", "#fff");
+
 
         node.append("clipPath")
             .attr("id", d => (d.clipUid = window.uniqueId()))
@@ -110,7 +102,7 @@ const chart = d3.json("/data/data.json").then(function (data) {
             // .attr("clip-path", d => d.clipUid)
             .attr("font-weight", d => d === root ? "bold" : null)
             .selectAll("tspan")
-            .data(d => (d === root ? name(d) : d.data.name).split(/(?=[A-Z][^A-Z])/g).concat(format(d.value)))
+            .data(d => (d === root ? name(d) : d.data.name).split(/(?=[A-Z][^A-Z])/g))
             .join("tspan")
             .attr("x", 3)
             .attr("y", (d, i, nodes) => `${(i === nodes.length - 1) * 0.3 + 1.1 + i * 0.9}em`)
