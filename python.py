@@ -16,13 +16,11 @@ with open(csv_file_path, mode='r') as csv_file:
         row_data['impact'] = int(row['AI Impact'].replace('%',''))
         row_data['workrate'] = row['AI_Workload_Ratio']
         # calculate percentage of automated Tasks and human tasks
-        # int(row['Tasks'])/(1 + 1/float(row['AI_Workload_Ratio']))
-        w_AI = round(5*int(row['Tasks'])/(1 + 1/float(row['AI_Workload_Ratio'])) +  95*row_data['impact'])
-        w_human = int(row['Tasks']) - w_AI
-        row_data['w_AI'] = w_AI
-        row_data['w_human'] = w_human
+        row_data['w_AI'] = round(int(row['Tasks'])/(1 + 1/float(row['AI_Workload_Ratio'])))
+        row_data['w_AI_all'] = round(5*int(row['Tasks'])/(1 + 1/float(row['AI_Workload_Ratio'])) +  95*row_data['impact'])
+        row_data['w_human'] = int(row['Tasks']) - row_data['w_AI']
         # w_AI in percentage
-        row_data['w_AI_percent'] = round(w_AI * 100 / int(row['Tasks']))
+        row_data['w_AI_percent'] = round(row_data['w_AI'] * 100 / int(row['Tasks']))
         # w_human in percentage
         row_data['w_human_percent'] = 100 - row_data['w_AI_percent']
              

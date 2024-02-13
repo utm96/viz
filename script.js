@@ -18,10 +18,6 @@ const width = 1450;
 const height = 924;
 
 const chart = d3.json("/data/new_data.json").then(function (data) {
-    console.log("loaded data")
-
-
-
     // This custom tiling function adapts the built-in binary tiling function
     // for the appropriate aspect ratio when the treemap is zoomed-in.
     function tile(node, x0, y0, x1, y1) {
@@ -33,11 +29,10 @@ const chart = d3.json("/data/new_data.json").then(function (data) {
             child.y1 = y0 + child.y1 / height * (y1 - y0);
         }
     }
-    console.log(data);
 
     // Compute the layout.
     const hierarchy = d3.hierarchy(data)
-        .sum(d => d.w_AI)
+        .sum(d => d.w_AI_all)
         .sort((a, b) => a.value - b.value);
     console.log(hierarchy);
     const root = d3.treemap().tile(tile)(hierarchy);
@@ -56,13 +51,12 @@ const chart = d3.json("/data/new_data.json").then(function (data) {
         .attr("height", height + 30)
         .attr("style", "max-width: 100%; height: auto;")
         .style("font", "10px sans-serif");
-        
+
     // Display the root.
     let group = svg.append("g")
         .call(render, root);
 
     function render(group, root) {
-        console.log(root);
         const node = group
             .selectAll("g")
             .data(root.children.concat(root))
@@ -70,7 +64,32 @@ const chart = d3.json("/data/new_data.json").then(function (data) {
 
         node.filter(d => d === root ? d.parent : d.children)
             .attr("cursor", "pointer")
-            .on("click", (event, d) => d === root ? zoomout(root) : zoomin(d));
+            .on("click", (event, d) => d === root ? zoomout(root) : zoomin(d))
+
+        node.filter(d => !d.children)
+            .attr("cursor", "pointer")
+            .on("click", function (event, d) {
+                // Update the modal content
+                d3.select("#modalText").html(`Name: ${d.data.name}<br>Tasks: ${format(d.data.value)}<br>Impact: ${d.data.impact}%`);
+
+                // Display the modal
+                d3.select("#infoModal").style("display", "block");
+
+                // If the clicked leaf node has impact > 50, do something
+                if (d.data.impact > 50) {
+                    data = d.parent.data.children.filter(child => child.impact < 50);
+                    shuffleArray(data);
+                    drawChart(data.slice(0, 10));
+                }
+            });
+
+        // Close the modal when the close button is clicked
+        d3.select(".close").on("click", function () {
+            d3.select("#infoModal").style("display", "none");
+            // Clear any existing SVG to avoid overlapping charts
+            d3.select("#modalChart").selectAll("*").remove();
+        });
+
 
         node.append("title")
             .text(d => `${name(d)}\n${format(d.value)}`);
@@ -78,16 +97,12 @@ const chart = d3.json("/data/new_data.json").then(function (data) {
         node.append("rect")
             .attr("id", d => (d.leafUid = window.uniqueId()))
             .attr("fill", function (d) {
-                // Check if the current node is the root or has children to apply different logic
                 if (d === root) {
-                    // Apply color shading to the root based on its w_AI value
-                    return '#fff'; // Using d.value which is the sum for the root node
+                    return '#fff'; 
                 } else if (d.children) {
-                    // Apply a different shading for parents (non-leaf nodes)
                     return colorScaleDomain(d.value);
                 } else {
-                    // Apply color shading for leaves based on w_AI_percent
-                    return d.data.w_AI !== undefined ? colorScale(d.data.w_AI) : "#fff";
+                    return d.data.w_AI_all !== undefined ? colorScale(d.data.w_AI_all) : "#fff";
                 }
             })
             .attr("stroke", "#fff");
@@ -154,11 +169,71 @@ const chart = d3.json("/data/new_data.json").then(function (data) {
             .call(t => group1.transition(t)
                 .call(position, d.parent));
     }
+
+    // Draw a chart in the modal
+    function drawChart(data) {
+        const margin = { top: 20, right: 20, bottom: 100, left: 20 },
+            width = 500 - margin.left - margin.right,
+            height = 400 - margin.top - margin.bottom;
+
+        // Clear any existing SVG to avoid overlapping charts
+        d3.select("#modalChart").selectAll("*").remove();
+
+        // Create SVG element
+        const svg = d3.select("#modalChart").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        // Create the X-axis scale
+        const x = d3.scaleBand()
+            .range([0, width])
+            .padding(0.1)
+            .domain(data.map(d => d.name));
+
+        // Create the Y-axis scale
+        const y = d3.scaleLinear()
+            .range([height, 0])
+            .domain([0, d3.max(data, d => d.impact)]);
+
+        // Append the rectangles for the bar chart
+        svg.selectAll(".bar")
+            .data(data)
+            .enter().append("rect")
+            .attr("class", "bar")
+            .attr("x", d => x(d.name))
+            .attr("width", x.bandwidth())
+            .attr("y", d => y(d.impact))
+            .attr("height", d => height - y(d.impact))
+            .attr("fill", "steelblue");
+
+        // Add the X-axis
+        svg.append("g")
+            .attr("transform", `translate(0,${height})`)
+            .call(d3.axisBottom(x))
+            .selectAll("text")
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", ".15em")
+            .attr("transform", "rotate(-50)");
+
+
+        // Add the Y-axis
+        svg.append("g")
+            .call(d3.axisLeft(y));
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+        }
+    }
     // d3.select("#chart").append(svg.node());
 
     return svg.node();
 
-}).then((chart) => console.log(chart))
-    ;
+}).then((chart) => console.log(chart));
 
 
