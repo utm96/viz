@@ -237,3 +237,37 @@ const chart = d3.json("/data/new_data.json").then(function (data) {
 }).then((chart) => console.log(chart));
 
 
+document.addEventListener('DOMContentLoaded', (event) => {
+    const searchInput = document.getElementById('searchInput');
+
+    searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        const nodes = document.querySelectorAll('svg g');
+
+        nodes.forEach(node => {
+            const textElements = node.querySelectorAll('text');
+            
+            textElements.forEach(textElement => {
+                textElement.style.fill = 'black'; 
+                textElement.style.fontWeight = 'normal';
+
+                if (textElement.textContent.toLowerCase().includes(query)) {
+                    // Highlight matched text
+                    textElement.style.fill = 'yellow'; 
+                    textElement.style.fontWeight = 'bold';
+                }
+            });
+        });
+
+        if (query === '') {
+            // If the search query is cleared, reset all highlights
+            nodes.forEach(node => {
+                const textElements = node.querySelectorAll('text');
+                textElements.forEach(textElement => {
+                    textElement.style.fill = 'black'; // Reset color or remove highlight class
+                    textElement.style.fontWeight = 'normal';
+                });
+            });
+        }
+    });
+});

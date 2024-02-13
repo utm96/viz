@@ -101,6 +101,38 @@
       cursor: pointer;
       color: #a6c58f;
     }
+
+    /* Basic styling for the search input */
+    #searchInput {
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin: 10px 0;
+      width: calc(100% - 740px);
+      box-sizing: border-box;
+      font-size: 16px;
+      line-height: 1.5;
+      transition: border-color 0.3s;
+    }
+
+    /* Styling for the search input when it is in focus */
+    #searchInput:focus {
+      border-color: #0066cc;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+    }
+
+    /* Placeholder styling */
+    #searchInput::placeholder {
+      color: #999;
+      opacity: 1;
+    }
+
+    /* Input styling for when there is input or the input is active */
+    #searchInput:not(:placeholder-shown),
+    #searchInput:focus:not(:placeholder-shown) {
+      background-color: #fff;
+    }
   </style>
 </head>
 
@@ -206,6 +238,7 @@
 
   <!-- The container for the treemap -->
   <div align="center" id="treemap-container">
+    <input type="text" id="searchInput" placeholder="Search by name..." />
     <p id="chart">
 
   </div>
