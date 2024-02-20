@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Impact of Generative AI on Jobs</title>
   <script src="https://d3js.org/d3.v7.min.js"></script>
+  
   <link rel="stylesheet" href="style.css">
 
   <style>
@@ -246,6 +247,10 @@
     <div class="modal-content">
       <span class="close">&times;</span>
       <div id="modalText"></div>
+      <div id="modalButtons">
+        <button onclick="updateModal('impact')">Impact</button>
+        <button onclick="updateModal('job_number')">Number of Job</button>
+      </div>
       <div id="modalChart"></div>
     </div>
   </div>

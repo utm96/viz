@@ -17,8 +17,8 @@ const colorScaleDomain = d3.scaleSequential(d3.interpolateReds)
 const width = 1450;
 const height = 924;
 let data_value = undefined;
-
-const chart = d3.json("/data/data.json").then(data => drawTreeMap(data)).then((chart) => console.log(chart));
+let modalData = undefined;
+const chart = d3.json("/data/data_new.json").then(data => drawTreeMap(data)).then((chart) => console.log(chart));
 
 function drawTreeMap(data) {
     data_value = data;
@@ -177,53 +177,45 @@ function drawTreeMap(data) {
 
     // Draw a chart in the modal
     function drawChart(data) {
-        const margin = { top: 30, right: 20, bottom: 100, left: 50 },
-            width = 550 - margin.left - margin.right,
-            height = 500 - margin.top - margin.bottom;
+        modalData = data;
+        console.log(modalData);
 
-        // Clear any existing SVG to avoid overlapping charts
-        d3.select("#modalChart").selectAll("*").remove();
-
-        // Create SVG element
-        const svg = d3.select("#modalChart").append("svg")
-            .attr("width", width + margin.left + margin.right - 20)
-            .attr("height", height + margin.top + margin.bottom + 50)
-            .append("g")
-            .attr("transform", `translate(${margin.left},${margin.top})`);
 
         // Create the X-axis scale
-        const x = d3.scaleBand()
-            .range([0, width])
-            .padding(0.1)
-            .domain(data.map(d => d.name));
+        // const x = d3.scaleBand()
+        //     .range([0, width])
+        //     .padding(0.1)
+        //     .domain(data.map(d => d.name));
+
+
 
         // Create the Y-axis scale
-        const y = d3.scaleLinear()
-            .range([height, 0])
-            .domain([0, d3.max(data, d => d.impact)]);
+        // const y = d3.scaleLinear()
+        //     .range([height, 0])
+        //     .domain([0, d3.max(data, d => d.impact)]);
 
         // Append the rectangles for the bar chart
-        svg.selectAll(".bar")
-            .data(data)
-            .enter().append("rect")
-            .attr("class", "bar")
-            .attr("x", d => x(d.name))
-            .attr("width", x.bandwidth())
-            .attr("y", d => y(d.impact))
-            .attr("height", d => height - y(d.impact))
-            .attr("fill", "steelblue");
+        // svg.selectAll(".bar")
+        //     .data(data)
+        //     .enter().append("rect")
+        //     .attr("class", "bar")
+        //     .attr("x", d => x(d.name))
+        //     .attr("width", x.bandwidth())
+        //     .attr("y", d => y(d.impact))
+        //     .attr("height", d => height - y(d.impact))
+        //     .attr("fill", "steelblue");
 
-        // Add the X-axis
-        svg.append("g")
-            .attr("transform", `translate(0,${height})`)
-            .call(d3.axisBottom(x))
-            .selectAll("text")
-            .style("text-anchor", "end")
-            .attr("dx", "-.8em")
-            .attr("dy", ".15em")
-            .attr("transform", "rotate(-50)");
+        // // Add the X-axis
+        // svg.append("g")
+        //     .attr("transform", `translate(0,${height})`)
+        //     .call(d3.axisBottom(x))
+        //     .selectAll("text")
+        //     .style("text-anchor", "end")
+        //     .attr("dx", "-.8em")
+        //     .attr("dy", ".15em")
+        //     .attr("transform", "rotate(-50)");
 
-
+        updateModal('impact');
         // Add the Y-axis
         svg.append("g")
             .call(d3.axisLeft(y));
@@ -281,3 +273,94 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
     });
 });
+
+
+function updateModal(selectedVar) {
+
+    // Parse the Data
+    // d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/barplot_change_data.csv", function(data) {
+
+    // X axis
+    const margin = { top: 30, right: 20, bottom: 100, left: 50 },
+        width = 550 - margin.left - margin.right,
+        height = 500 - margin.top - margin.bottom;
+
+    // Clear any existing SVG to avoid overlapping charts
+    d3.select("#modalChart").selectAll("*").remove();
+
+    // d3.select("#modalButtons")
+    //     .append("button")
+    //     .attr("onclick", "togglePressed()");
+    // Create SVG element
+    const svg = d3.select("#modalChart").append("svg")
+        .attr("width", width + margin.left + margin.right - 20)
+        .attr("height", height + margin.top + margin.bottom + 50)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    var x = d3.scaleBand()
+        .range([0, width])
+        .padding(1);
+    var xAxis = svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+
+
+    var y = d3.scaleLinear()
+        .range([height, 0]);
+    var yAxis = svg.append("g")
+        .attr("class", "myYaxis")
+    x.domain(modalData.map(function (d) { return d.name; }));
+    xAxis.transition().duration(1000).call(d3.axisBottom(x)).selectAll("text")  
+    .style("text-anchor", "end")
+    .attr("dx", "-.8em")
+    .attr("dy", ".15em")
+    .attr("transform", "rotate(-65)");
+
+    // Add Y axis
+    y.domain([0, d3.max(modalData, function (d) { return +d[selectedVar] })]);
+    yAxis.transition().duration(1000).call(d3.axisLeft(y));
+
+
+    // svg.call(xAxis)
+    //     .selectAll("text")
+    //     .style("text-anchor", "end")
+    //     .attr("dx", "-.8em")
+    //     .attr("dy", ".15em")
+    //     .attr("transform", "rotate(-65)");
+    // variable u: map data to existing circle
+    var j = svg.selectAll(".myLine")
+        .data(modalData)
+    // update lines
+    j
+        .enter()
+        .append("line")
+        .attr("class", "myLine")
+        .merge(j)
+        .transition()
+        .duration(1000)
+        .attr("x1", function (d) { console.log(x(d.name)); return x(d.name); })
+        .attr("x2", function (d) { return x(d.name); })
+        .attr("y1", y(0))
+        .attr("y2", function (d) { return y(d[selectedVar]); })
+        .attr("stroke", "grey")
+
+
+    // variable u: map data to existing circle
+    var u = svg.selectAll("circle")
+        .data(modalData)
+    // update bars
+    u
+        .enter()
+        .append("circle")
+        .merge(u)
+        .transition()
+        .duration(1000)
+        .attr("cx", function (d) { return x(d.name); })
+        .attr("cy", function (d) { return y(d[selectedVar]); })
+        .attr("r", 8)
+        .attr("fill", "#69b3a2");
+
+
+    // })
+
+}

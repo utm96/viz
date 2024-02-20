@@ -4,7 +4,7 @@ import json
 csv_file_path = 'data/My_Data.csv'
 json_file_path = 'output_json_file.json'
 job_file_path = 'data/job.csv'
-json_file_path_output = 'data/data.json'
+json_file_path_output = 'data/data_new.json'
 
 data = {'name':'root','children':[]}
 data_temp = {}
@@ -15,7 +15,11 @@ with open(job_file_path, mode='r') as csv_file:
     print(csv_reader)
     for row in csv_reader:
         print(row)
-        value = row['Text']
+        value = 0
+        try:
+            value = int(''.join(i for i in row['Text'] if i.isdigit()))
+        except:
+            pass
         name = row['ï»¿name']
         data_job[name] = value
 
@@ -57,10 +61,10 @@ with open(csv_file_path, mode='r') as csv_file:
 
 
 
-with open(json_file_path, mode='w') as json_file:
+with open(json_file_path_output, mode='w') as json_file:
     json.dump(data, json_file, indent=2)
 
-print(f'Conversion completed. JSON file saved at {json_file_path}')
+print(f'Conversion completed. JSON file saved at {json_file_path_output}')
 
 # find max_value of w_AI in the json file
 max_value = 0
