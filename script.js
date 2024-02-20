@@ -79,9 +79,11 @@ function drawTreeMap(data) {
 
                 // Display the modal
                 d3.select("#infoModal").style("display", "block");
+                document.getElementById("modalButtons").style.display = "none";
 
                 // If the clicked leaf node has impact > 50, do something
-                if (d.data.impact > 50) {
+                if (d.data.impact >= 50) {
+                    document.getElementById("modalButtons").style.display = "block";
                     data = d.parent.data.children.filter(child => child.impact < 50);
                     shuffleArray(data);
                     drawChart(data.slice(0, 10));
@@ -234,8 +236,6 @@ function drawTreeMap(data) {
 }
 // }
 
-
-
 document.addEventListener('DOMContentLoaded', (event) => {
     const searchInput = document.getElementById('searchInput');
 
@@ -287,7 +287,6 @@ function updateModal(selectedVar) {
 
     // Clear any existing SVG to avoid overlapping charts
     d3.select("#modalChart").selectAll("*").remove();
-
     // d3.select("#modalButtons")
     //     .append("button")
     //     .attr("onclick", "togglePressed()");
