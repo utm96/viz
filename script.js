@@ -16,8 +16,13 @@ const colorScaleDomain = d3.scaleSequential(d3.interpolateReds)
 //     transitioning;
 const width = 1450;
 const height = 924;
+let data_value = undefined;
 
-const chart = d3.json("/data/new_data.json").then(function (data) {
+const chart = d3.json("/data/data.json").then(data => drawTreeMap(data)).then((chart) => console.log(chart));
+
+function drawTreeMap(data) {
+    data_value = data;
+    // function (data) {
     // This custom tiling function adapts the built-in binary tiling function
     // for the appropriate aspect ratio when the treemap is zoomed-in.
     function tile(node, x0, y0, x1, y1) {
@@ -70,7 +75,7 @@ const chart = d3.json("/data/new_data.json").then(function (data) {
             .attr("cursor", "pointer")
             .on("click", function (event, d) {
                 // Update the modal content
-                d3.select("#modalText").html(`Name: ${d.data.name}<br>Tasks: ${format(d.data.value)}<br>Impact: ${d.data.impact}%`);
+                d3.select("#modalText").html(`Name: ${d.data.name}<br>Tasks: ${format(d.data.value)}<br>Impact: ${d.data.impact}%<br>Job Number: ${d.data.job_number}`);
 
                 // Display the modal
                 d3.select("#infoModal").style("display", "block");
@@ -98,7 +103,7 @@ const chart = d3.json("/data/new_data.json").then(function (data) {
             .attr("id", d => (d.leafUid = window.uniqueId()))
             .attr("fill", function (d) {
                 if (d === root) {
-                    return '#fff'; 
+                    return '#fff';
                 } else if (d.children) {
                     return colorScaleDomain(d.value);
                 } else {
@@ -172,17 +177,17 @@ const chart = d3.json("/data/new_data.json").then(function (data) {
 
     // Draw a chart in the modal
     function drawChart(data) {
-        const margin = { top: 20, right: 20, bottom: 100, left: 20 },
-            width = 500 - margin.left - margin.right,
-            height = 400 - margin.top - margin.bottom;
+        const margin = { top: 30, right: 20, bottom: 100, left: 50 },
+            width = 550 - margin.left - margin.right,
+            height = 500 - margin.top - margin.bottom;
 
         // Clear any existing SVG to avoid overlapping charts
         d3.select("#modalChart").selectAll("*").remove();
 
         // Create SVG element
         const svg = d3.select("#modalChart").append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
+            .attr("width", width + margin.left + margin.right - 20)
+            .attr("height", height + margin.top + margin.bottom + 50)
             .append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
@@ -234,30 +239,35 @@ const chart = d3.json("/data/new_data.json").then(function (data) {
 
     return svg.node();
 
-}).then((chart) => console.log(chart));
+}
+// }
+
 
 
 document.addEventListener('DOMContentLoaded', (event) => {
     const searchInput = document.getElementById('searchInput');
 
-    searchInput.addEventListener('input', function() {
+    searchInput.addEventListener('input', function () {
         const query = this.value.toLowerCase();
         const nodes = document.querySelectorAll('svg g');
-
+        // var filtered_data =  data_value.children.filter(a => a.data.name.toLowerCase().includes(query))
+        // drawTreeMap(filtered_data);
         nodes.forEach(node => {
             const textElements = node.querySelectorAll('text');
-            
+
             textElements.forEach(textElement => {
-                textElement.style.fill = 'black'; 
+                textElement.style.fill = 'black';
                 textElement.style.fontWeight = 'normal';
 
                 if (textElement.textContent.toLowerCase().includes(query)) {
                     // Highlight matched text
-                    textElement.style.fill = 'yellow'; 
+                    textElement.style.fill = 'yellow';
                     textElement.style.fontWeight = 'bold';
                 }
             });
         });
+
+
 
         if (query === '') {
             // If the search query is cleared, reset all highlights
