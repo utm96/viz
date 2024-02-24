@@ -309,11 +309,11 @@ function updateModal(selectedVar) {
     var yAxis = svg.append("g")
         .attr("class", "myYaxis")
     x.domain(modalData.map(function (d) { return d.name; }));
-    xAxis.transition().duration(1000).call(d3.axisBottom(x)).selectAll("text")  
-    .style("text-anchor", "end")
-    .attr("dx", "-.8em")
-    .attr("dy", ".15em")
-    .attr("transform", "rotate(-65)");
+    xAxis.transition().duration(1000).call(d3.axisBottom(x)).selectAll("text")
+        .style("text-anchor", "end")
+        .attr("dx", "-.8em")
+        .attr("dy", ".15em")
+        .attr("transform", "rotate(-65)");
 
     // Add Y axis
     y.domain([0, d3.max(modalData, function (d) { return +d[selectedVar] })]);
@@ -343,7 +343,13 @@ function updateModal(selectedVar) {
         .attr("y2", function (d) { return y(d[selectedVar]); })
         .attr("stroke", "grey")
 
-
+    var tooltip = d3.select("#modalChart")
+        .append("div")
+        .style("position", "absolute")
+        .style("z-index", "10")
+        .style("visibility", "hidden")
+        // .style("background", "#000")
+        .text("a simple tooltip");
     // variable u: map data to existing circle
     var u = svg.selectAll("circle")
         .data(modalData)
@@ -352,12 +358,20 @@ function updateModal(selectedVar) {
         .enter()
         .append("circle")
         .merge(u)
+        .on("mouseover", function (event, d ) { tooltip.text(d[selectedVar]);console.log(event);tooltip.style("top", (event.clientY - 10) + "px").style("left", (event.clientX + 10) + "px"); return tooltip.style("visibility", "visible");  })
+        .on("mousemove", function (event, d ) { return tooltip.style("top", (event.clientY - 10) + "px").style("left", (event.clientX + 10) + "px"); })
+        .on("mouseout", function (d, event) { return tooltip.style("visibility", "hidden"); })
         .transition()
         .duration(1000)
         .attr("cx", function (d) { return x(d.name); })
         .attr("cy", function (d) { return y(d[selectedVar]); })
+        // .on('mouseover', (event, d) => console.log(d[selectedVar]))
+        // .on('mouseover', (event, d) => console.log(d[selectedVar]))
         .attr("r", 8)
-        .attr("fill", "#69b3a2");
+
+        .attr("fill", "#69b3a2")
+
+        ;
 
 
     // })

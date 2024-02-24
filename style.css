@@ -172,10 +172,39 @@ body {
   cursor: pointer;
 }
 
-.info_section p:not(:first-child) {
+/* .info_section p:not(:first-child) {
   display: none;
-}
+} */
 
 .info_section div:hover p:not(:first-child) {
   display: block;
 }
+
+
+/* .info_section div:hover p:first-child {
+  display: none;
+} */
+
+/* .item__overlay {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 100%;
+	position: absolute;
+	width: 100%;
+	top: 0;
+	transition: transform 300ms;
+	background-color: lighten(turquoise, 15%);
+	transform: translate3d(0, calc(100% - 3.5rem), 0);
+}
+
+.item_section{
+
+		&:hover,
+		&:focus {
+			~ .item__overlay {
+				transform: translate3d(0, 0, 0);
+			}
+		}
+
+} */
