@@ -181,6 +181,43 @@ body {
 }
 
 
+
+.item-wrapper{
+  height:7rem;
+  position:relative;
+  overflow:hidden;
+  color:white;
+  font-family:sans-serif;
+}
+
+/* .content{
+  height:100%;
+  background-color:red;
+  padding:10px;
+} */
+
+.popup-title{
+  position:absolute;
+  top: -151%;
+  width:95%;
+  transition: bottom 0.5s, top 0.5s;
+  vertical-align: bottom;
+    /* background-color: black; */
+}
+
+.popup-title span, .popup-title p{
+    display:block;
+    margin:0;
+    padding: 10px;
+}
+
+.item-wrapper:hover .popup-title{
+      top: 0;
+}
+.item-wrapper:hover .info{
+  display: none;
+}
+
 /* .info_section div:hover p:first-child {
   display: none;
 } */
