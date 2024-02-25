@@ -34,12 +34,13 @@ with open(csv_file_path, mode='r') as csv_file:
         row_data['workrate'] = row['AI_Workload_Ratio']
         # calculate percentage of automated Tasks and human tasks
         row_data['w_AI'] = round(int(row['Tasks'])/(1 + 1/float(row['AI_Workload_Ratio'])))
-        row_data['w_AI_all'] = round(5*int(row['Tasks'])/(1 + 1/float(row['AI_Workload_Ratio'])) +  95*row_data['impact'])
         row_data['w_human'] = int(row['Tasks']) - row_data['w_AI']
         # w_AI in percentage
         row_data['w_AI_percent'] = round(row_data['w_AI'] * 100 / int(row['Tasks']))
         # w_human in percentage
         row_data['w_human_percent'] = 100 - row_data['w_AI_percent']
+        row_data['w_AI_all'] = round(5*row_data['w_AI_percent'] +  95*row_data['impact'])
+
         if(row['Job titiles'] in data_job):
             row_data['job_number'] = data_job[row['Job titiles']]
         else :

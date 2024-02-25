@@ -7,7 +7,7 @@ const colorScale = d3.scaleSequential(d3.interpolateReds)
     .domain([500, 10000]);
 
 const colorScaleDomain = d3.scaleSequential(d3.interpolateReds)
-    .domain([1500000, 1599000]);
+    .domain([1360000, 1450000]);
 
 const width = 1450;
 const height = 924;
