@@ -3,32 +3,21 @@ window.uniqueId = function () {
     return 'myid-' + counter++
 }
 
-let listColor = ['#FFFAFA',
-    '#FFE4E1',
-    '#ECCFCF',
-    '#F7BFBE',
-    '#F7BFBE',
-    '#F08F90',
-    '#FA8072',
-    '#FF6961',
-    '#F7665A',
-    '#FF0000']
-// console.log('hello');
-// var margin = {top: 20, right: 0, bottom: 0, left: 0},
-//     width = 960,
-//     height = 500 - margin.top - margin.bottom,
-//     formatNumber = d3.format(",d"),
-//     transitioning;
+const colorScale = d3.scaleSequential(d3.interpolateReds)
+    .domain([500, 10000]);
+
+const colorScaleDomain = d3.scaleSequential(d3.interpolateReds)
+    .domain([1500000, 1599000]);
+
 const width = 1450;
 const height = 924;
+let data_value = undefined;
+let modalData = undefined;
+const chart = d3.json("/data/data_new.json").then(data => drawTreeMap(data)).then((chart) => console.log(chart));
 
-const chart = d3.json("./data/data.json").then(function (data) {
-    console.log("loaded data")
+function drawTreeMap(data) {
+    data_value = data;
 
-
-
-    // This custom tiling function adapts the built-in binary tiling function
-    // for the appropriate aspect ratio when the treemap is zoomed-in.
     function tile(node, x0, y0, x1, y1) {
         d3.treemapBinary(node, 0, 0, width, height);
         for (const child of node.children) {
@@ -38,12 +27,11 @@ const chart = d3.json("./data/data.json").then(function (data) {
             child.y1 = y0 + child.y1 / height * (y1 - y0);
         }
     }
-    console.log(data);
 
     // Compute the layout.
     const hierarchy = d3.hierarchy(data)
-        .sum(d => d.value)
-        .sort((a, b) => b.value - a.value);
+        .sum(d => d.w_AI_all)
+        .sort((a, b) => a.value - b.value);
     console.log(hierarchy);
     const root = d3.treemap().tile(tile)(hierarchy);
 
@@ -55,13 +43,6 @@ const chart = d3.json("./data/data.json").then(function (data) {
     const format = d3.format(",d");
     const name = d => d.ancestors().reverse().map(d => d.data.name).join("/");
 
-    // Create the SVG container.
-    // const svg = d3.create("svg")
-    //     .attr("viewBox", [0.5, -30.5, width, height + 30])
-    //     .attr("width", width)
-    //     .attr("height", height + 30)
-    //     .attr("style", "max-width: 100%; height: auto;")
-    //     .style("font", "10px sans-serif");
     var svg = d3.select("#chart").append("svg")
         .attr("viewBox", [0.5, -30.5, width, height + 30])
         .attr("width", width)
@@ -74,7 +55,6 @@ const chart = d3.json("./data/data.json").then(function (data) {
         .call(render, root);
 
     function render(group, root) {
-        console.log(root);
         const node = group
             .selectAll("g")
             .data(root.children.concat(root))
@@ -82,7 +62,34 @@ const chart = d3.json("./data/data.json").then(function (data) {
 
         node.filter(d => d === root ? d.parent : d.children)
             .attr("cursor", "pointer")
-            .on("click", (event, d) => d === root ? zoomout(root) : zoomin(d));
+            .on("click", (event, d) => d === root ? zoomout(root) : zoomin(d))
+
+        node.filter(d => !d.children)
+            .attr("cursor", "pointer")
+            .on("click", function (event, d) {
+                // Update the modal content
+                d3.select("#modalText").html(`Name: ${d.data.name}<br>Tasks: ${format(d.data.value)}<br>Impact: ${d.data.impact}%<br>Job Number: ${d.data.job_number}`);
+
+                // Display the modal
+                d3.select("#infoModal").style("display", "block");
+                document.getElementById("modalButtons").style.display = "none";
+
+                // If the clicked leaf node has impact > 50, do something
+                if (d.data.impact >= 50) {
+                    document.getElementById("modalButtons").style.display = "block";
+                    data = d.parent.data.children.filter(child => child.impact < 50);
+                    shuffleArray(data);
+                    drawChart(data.slice(0, 10));
+                }
+            });
+
+        // Close the modal when the close button is clicked
+        d3.select(".close").on("click", function () {
+            d3.select("#infoModal").style("display", "none");
+            // Clear any existing SVG to avoid overlapping charts
+            d3.select("#modalChart").selectAll("*").remove();
+        });
+
 
         node.append("title")
             .text(d => `${name(d)}\n${format(d.value)}`);
@@ -90,16 +97,16 @@ const chart = d3.json("./data/data.json").then(function (data) {
         node.append("rect")
             .attr("id", d => (d.leafUid = window.uniqueId()))
             .attr("fill", function (d) {
-                console.log('d.data.impact: ' + d.data.impact);
-                if (d === root) return "#fff";
-                if (d.children) return "#ddd";
-                if (d.data.impact) {
-                    console.log('impact: ' + d.data.impact);
-                    return listColor[Math.ceil(d.data.impact / 10)]
+                if (d === root) {
+                    return '#fff';
+                } else if (d.children) {
+                    return colorScaleDomain(d.value);
+                } else {
+                    return d.data.w_AI_all !== undefined ? colorScale(d.data.w_AI_all) : "#fff";
                 }
-
             })
             .attr("stroke", "#fff");
+
 
         node.append("clipPath")
             .attr("id", d => (d.clipUid = window.uniqueId()))
@@ -110,7 +117,7 @@ const chart = d3.json("./data/data.json").then(function (data) {
             // .attr("clip-path", d => d.clipUid)
             .attr("font-weight", d => d === root ? "bold" : null)
             .selectAll("tspan")
-            .data(d => (d === root ? name(d) : d.data.name).split(/(?=[A-Z][^A-Z])/g).concat(format(d.value)))
+            .data(d => (d === root ? name(d) : d.data.name).split(/(?=[A-Z][^A-Z])/g))
             .join("tspan")
             .attr("x", 3)
             .attr("y", (d, i, nodes) => `${(i === nodes.length - 1) * 0.3 + 1.1 + i * 0.9}em`)
@@ -162,11 +169,143 @@ const chart = d3.json("./data/data.json").then(function (data) {
             .call(t => group1.transition(t)
                 .call(position, d.parent));
     }
-    // d3.select("#chart").append(svg.node());
+
+    // Draw a chart in the modal
+    function drawChart(data) {
+        modalData = data;
+        updateModal('impact');
+        // Add the Y-axis
+        svg.append("g")
+            .call(d3.axisLeft(y));
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+        }
+    }
 
     return svg.node();
 
-}).then((chart) => console.log(chart))
-    ;
+}
+// }
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    const searchInput = document.getElementById('searchInput');
+
+    searchInput.addEventListener('input', function () {
+        const query = this.value.toLowerCase();
+        const nodes = document.querySelectorAll('svg g');
+
+        nodes.forEach(node => {
+            const textElements = node.querySelectorAll('text');
+
+            textElements.forEach(textElement => {
+                textElement.style.fill = 'black';
+                textElement.style.fontWeight = 'normal';
+
+                if (textElement.textContent.toLowerCase().includes(query)) {
+                    // Highlight matched text
+                    textElement.style.fill = 'yellow';
+                    textElement.style.fontWeight = 'bold';
+                }
+            });
+        });
 
 
+
+        if (query === '') {
+            // If the search query is cleared, reset all highlights
+            nodes.forEach(node => {
+                const textElements = node.querySelectorAll('text');
+                textElements.forEach(textElement => {
+                    textElement.style.fill = 'black'; // Reset color or remove highlight class
+                    textElement.style.fontWeight = 'normal';
+                });
+            });
+        }
+    });
+});
+
+
+function updateModal(selectedVar) {
+    // X axis
+    const margin = { top: 30, right: 20, bottom: 100, left: 50 },
+        width = 550 - margin.left - margin.right,
+        height = 500 - margin.top - margin.bottom;
+
+    // Clear any existing SVG to avoid overlapping charts
+    d3.select("#modalChart").selectAll("*").remove();
+
+    // Create SVG element
+    const svg = d3.select("#modalChart").append("svg")
+        .attr("width", width + margin.left + margin.right - 20)
+        .attr("height", height + margin.top + margin.bottom + 50)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    var x = d3.scaleBand()
+        .range([0, width])
+        .padding(1);
+    var xAxis = svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+
+
+    var y = d3.scaleLinear()
+        .range([height, 0]);
+    var yAxis = svg.append("g")
+        .attr("class", "myYaxis")
+    x.domain(modalData.map(function (d) { return d.name; }));
+    xAxis.transition().duration(1000).call(d3.axisBottom(x)).selectAll("text")
+        .style("text-anchor", "end")
+        .attr("dx", "-.8em")
+        .attr("dy", ".15em")
+        .attr("transform", "rotate(-65)");
+
+    // Add Y axis
+    y.domain([0, d3.max(modalData, function (d) { return +d[selectedVar] })]);
+    yAxis.transition().duration(1000).call(d3.axisLeft(y));
+
+    var j = svg.selectAll(".myLine")
+        .data(modalData)
+    // update lines
+    j
+        .enter()
+        .append("line")
+        .attr("class", "myLine")
+        .merge(j)
+        .transition()
+        .duration(1000)
+        .attr("x1", function (d) { console.log(x(d.name)); return x(d.name); })
+        .attr("x2", function (d) { return x(d.name); })
+        .attr("y1", y(0))
+        .attr("y2", function (d) { return y(d[selectedVar]); })
+        .attr("stroke", "grey")
+
+    var tooltip = d3.select("#modalChart")
+        .append("div")
+        .style("position", "absolute")
+        .style("z-index", "10")
+        .style("visibility", "hidden")
+        // .style("background", "#000")
+        .text("a simple tooltip");
+    // variable u: map data to existing circle
+    var u = svg.selectAll("circle")
+        .data(modalData)
+    // update bars
+    u
+        .enter()
+        .append("circle")
+        .merge(u)
+        .on("mouseover", function (event, d) { tooltip.text(d[selectedVar]); console.log(event); tooltip.style("top", (event.clientY - 10) + "px").style("left", (event.clientX + 10) + "px"); return tooltip.style("visibility", "visible"); })
+        .on("mousemove", function (event, d) { return tooltip.style("top", (event.clientY - 10) + "px").style("left", (event.clientX + 10) + "px"); })
+        .on("mouseout", function (d, event) { return tooltip.style("visibility", "hidden"); })
+        .transition()
+        .duration(1000)
+        .attr("cx", function (d) { return x(d.name); })
+        .attr("cy", function (d) { return y(d[selectedVar]); })
+        .attr("r", 8)
+
+        .attr("fill", "#69b3a2");
+}

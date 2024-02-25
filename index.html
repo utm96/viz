@@ -5,147 +5,84 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Impact of Generative AI on Jobs</title>
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-  <link rel="stylesheet" href="style.css">
-
-  <style>
-    .info_section {
-      display: flex;
-      justify-content: space-between;
-      padding: 20px;
-      gap: 20px;
-    }
-
-    .header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px;
-      gap: 20px;
-    }
-
-    .header-image img {
-      width: 600px;
-      height: auto;
-      border-radius: 20px;
-    }
-
-    .header-content {
-      flex: 1;
-      padding: 0 20px;
-    }
-
-    .viz-container,
-    .research-question,
-    .viz-title,
-    .source {
-      margin-bottom: 20px;
-    }
-
-    a {
-      color: #007bff;
-      /* Example link color */
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    body {
-      font-family: 'Times New Roman', Times, serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f9f5f5;
-    }
-  </style>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <link href='https://fonts.googleapis.com/css?family=Prompt' rel='stylesheet'>
+  <link rel="stylesheet" href="asset/style.css">
 </head>
 
 <body>
   <div class="header">
     <div class="header-image">
-      <img
-        src="https://simplylearn.com/wp-content/uploads/2023/08/woman-and-ai-robot-working-together-2023-06-15-18-16-40-utc-scaled.jpg"
-        alt="Woman and AI Robot Working Together">
+      <img src="./asset/images/back.png" alt="Woman and AI Robot Working Together">
     </div>
     <div class="header-content">
-      <h1>Impact of Generative AI on Jobs</h1>
+      <h1 class="header-title">Impact of Generative AI on Jobs</h1>
       <div class="research-question">
-        <p><b>Research question:</b> What portion of tasks in a given job role are automated and which ones still
+        <p><b>Research question:</b>
+        <p style="color: #eba291;">
+          What portion of tasks in a given job role are automated and which ones still
           require human intervention due to the integration of generative AI models in different industries?</p>
-      </div>
-      <div class="viz-title">
-        <span><b>Viz title:</b> Job Vision</span>
-      </div>
-      <div class="source">
-        <p><span><b>Source</b>: Code is customized from p5's example (<a
-              href="https://editor.p5js.org/isob/sketches/QfXb51UPM" target="_blank">source</a>)</span></p>
+        </p>
       </div>
       <div class="viz-container">
         <p><b>How to Read the Visualization?</b></p>
-        <p>Start by observing the overall layout of rectangles, each symbolizing a different domain.
-          Note the size of each rectangle to gauge the volume of tasks in that domain. Then, focus on the color shading
-          within these rectangles to assess the impact of AI on specific job roles.
-          Lighter shades mean less automation and more need for human intervention, while darker shades signal higher
-          automation levels.
-          This visualization offers an interactive feature where viewers can zoom in on a particular domain (by clicking on that particular domain) to examine
-          the specific job roles it contains. This closer look provides detailed insights into the degree
-          of AI's impact on each role, highlighting the tasks automated by AI versus those still requiring human
-          expertise.
-          After exploring a domain in detail, users can zoom out (by clicking on the left top corner of the tree map ) to return to the broader view, allowing them to explore
-          other domains and compare the effects of AI across different industries.
-        </p>
+
+
+        <p>Observe the treemap layout to understand AI impact by rectangle size and by color shading, with
+          interactive
+          zoom features for detailed exploration of AI's role across domains.</p>
+
+      </div>
+      <div class="info_section">
+        <div class="item_section">
+          <p><b>What the Visualizations Show?</b></p>
+          <p>
+          <p>It shows generative AI's impact on the job market by depicting automation levels across job roles in
+            domains like healthcare, IT</p>
+        </div>
+        <div>
+          <p> <b> Who the Visualization is For?</b>
+          </p>
+          <p>It aids university students in planning their careers by highlighting industries and roles evolving due to
+            AI, enabling informed decisions on education and career paths aligned with future market trends</p>
+        </div>
+        <div>
+          <p> <b>Why Should You Care About It?</b>
+          </p>
+          <p>It is crucial for university students to understand how AI reshapes careers, highlighting roles vulnerable
+            to automation and those demanding human skills AI can't mimic</p>
+        </div>
       </div>
     </div>
+
   </div>
-  <div class="info_section">
-    <div>
-      <p><b>What the Visualizations Show?</b></p>
-      <p>
-        It illustrates the impact of generative AI on the job market by mapping out the extent to which tasks within
-        various job roles are automated.
-        It does this through a series of rectangles, each representing a distinct domain, such as healthcare, finance,
-        or technology.
-        The size of each rectangle reflects the total number of tasks within that domain.
-        Inside these rectangles, job roles are identified, and the impact of AI on these roles is depicted through a
-        spectrum of reds.
-        The color coding conveys the percentage of tasks automated by AI within each role: lighter shades denote a lower
-        impact (fewer tasks automated), and darker shades indicate a higher impact (more tasks automated).</p>
-    </div>
-    <div>
-      <p> <b> Who the Visualization is For?</b>
-      </p>
-      <p>
-        This visualization is specifically designed for university students who are navigating their career paths in an
-        evolving job market.
-        It helps these students understand which industries and job roles are undergoing significant transformations due
-        to AI technologies.
-        By providing a clear picture of the AI-driven changes, students can make informed decisions about their
-        education and career planning,
-        focusing on areas that align with future job market trends.
-      </p>
-    </div>
-    <div>
-      <p> <b>Why Should You Care About It?</b>
-      </p>
-      <p>
-        University students should take an interest in this visualization because it directly affects their future
-        career prospects. As AI continues to reshape the workplace,
-        understanding which job roles are most susceptible to automation and which will require human skills that AI
-        cannot replicate is crucial.
-        This knowledge enables students to pursue fields with enduring demand for human expertise, ensuring their skills
-        remain relevant and valuable in the long term.
-        Additionally, it offers insights into emerging roles and industries, guiding students towards opportunities in
-        AI-driven growth areas.
-      </p>
-    </div>
+  <div class="icon">
+    <a href="#treemap-container" rel="noopener noreferrer">
+      <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24">
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="m16 10l-4 4l-4-4" />
+      </svg>
+    </a>
   </div>
+
 
   <!-- The container for the treemap -->
   <div align="center" id="treemap-container">
+    <input type="text" id="searchInput" placeholder="Search by name..." />
     <p id="chart">
 
   </div>
-
+  <div id="infoModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <div id="modalText"></div>
+      <div id="modalButtons">
+        <button onclick="updateModal('impact')">Impact</button>
+        <button onclick="updateModal('job_number')">Number of Job</button>
+      </div>
+      <div id="modalChart"></div>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 
