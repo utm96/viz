@@ -8,12 +8,7 @@ const colorScale = d3.scaleSequential(d3.interpolateReds)
 
 const colorScaleDomain = d3.scaleSequential(d3.interpolateReds)
     .domain([1500000, 1599000]);
-// console.log('hello');
-// var margin = {top: 20, right: 0, bottom: 0, left: 0},
-//     width = 960,
-//     height = 500 - margin.top - margin.bottom,
-//     formatNumber = d3.format(",d"),
-//     transitioning;
+
 const width = 1450;
 const height = 924;
 let data_value = undefined;
@@ -22,9 +17,7 @@ const chart = d3.json("/data/data_new.json").then(data => drawTreeMap(data)).the
 
 function drawTreeMap(data) {
     data_value = data;
-    // function (data) {
-    // This custom tiling function adapts the built-in binary tiling function
-    // for the appropriate aspect ratio when the treemap is zoomed-in.
+
     function tile(node, x0, y0, x1, y1) {
         d3.treemapBinary(node, 0, 0, width, height);
         for (const child of node.children) {
@@ -180,43 +173,6 @@ function drawTreeMap(data) {
     // Draw a chart in the modal
     function drawChart(data) {
         modalData = data;
-        console.log(modalData);
-
-
-        // Create the X-axis scale
-        // const x = d3.scaleBand()
-        //     .range([0, width])
-        //     .padding(0.1)
-        //     .domain(data.map(d => d.name));
-
-
-
-        // Create the Y-axis scale
-        // const y = d3.scaleLinear()
-        //     .range([height, 0])
-        //     .domain([0, d3.max(data, d => d.impact)]);
-
-        // Append the rectangles for the bar chart
-        // svg.selectAll(".bar")
-        //     .data(data)
-        //     .enter().append("rect")
-        //     .attr("class", "bar")
-        //     .attr("x", d => x(d.name))
-        //     .attr("width", x.bandwidth())
-        //     .attr("y", d => y(d.impact))
-        //     .attr("height", d => height - y(d.impact))
-        //     .attr("fill", "steelblue");
-
-        // // Add the X-axis
-        // svg.append("g")
-        //     .attr("transform", `translate(0,${height})`)
-        //     .call(d3.axisBottom(x))
-        //     .selectAll("text")
-        //     .style("text-anchor", "end")
-        //     .attr("dx", "-.8em")
-        //     .attr("dy", ".15em")
-        //     .attr("transform", "rotate(-50)");
-
         updateModal('impact');
         // Add the Y-axis
         svg.append("g")
@@ -229,7 +185,6 @@ function drawTreeMap(data) {
             [array[i], array[j]] = [array[j], array[i]]; // Swap elements
         }
     }
-    // d3.select("#chart").append(svg.node());
 
     return svg.node();
 
@@ -242,8 +197,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     searchInput.addEventListener('input', function () {
         const query = this.value.toLowerCase();
         const nodes = document.querySelectorAll('svg g');
-        // var filtered_data =  data_value.children.filter(a => a.data.name.toLowerCase().includes(query))
-        // drawTreeMap(filtered_data);
+
         nodes.forEach(node => {
             const textElements = node.querySelectorAll('text');
 
@@ -276,10 +230,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 
 function updateModal(selectedVar) {
-
-    // Parse the Data
-    // d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/barplot_change_data.csv", function(data) {
-
     // X axis
     const margin = { top: 30, right: 20, bottom: 100, left: 50 },
         width = 550 - margin.left - margin.right,
@@ -287,9 +237,7 @@ function updateModal(selectedVar) {
 
     // Clear any existing SVG to avoid overlapping charts
     d3.select("#modalChart").selectAll("*").remove();
-    // d3.select("#modalButtons")
-    //     .append("button")
-    //     .attr("onclick", "togglePressed()");
+
     // Create SVG element
     const svg = d3.select("#modalChart").append("svg")
         .attr("width", width + margin.left + margin.right - 20)
@@ -319,14 +267,6 @@ function updateModal(selectedVar) {
     y.domain([0, d3.max(modalData, function (d) { return +d[selectedVar] })]);
     yAxis.transition().duration(1000).call(d3.axisLeft(y));
 
-
-    // svg.call(xAxis)
-    //     .selectAll("text")
-    //     .style("text-anchor", "end")
-    //     .attr("dx", "-.8em")
-    //     .attr("dy", ".15em")
-    //     .attr("transform", "rotate(-65)");
-    // variable u: map data to existing circle
     var j = svg.selectAll(".myLine")
         .data(modalData)
     // update lines
@@ -358,22 +298,14 @@ function updateModal(selectedVar) {
         .enter()
         .append("circle")
         .merge(u)
-        .on("mouseover", function (event, d ) { tooltip.text(d[selectedVar]);console.log(event);tooltip.style("top", (event.clientY - 10) + "px").style("left", (event.clientX + 10) + "px"); return tooltip.style("visibility", "visible");  })
-        .on("mousemove", function (event, d ) { return tooltip.style("top", (event.clientY - 10) + "px").style("left", (event.clientX + 10) + "px"); })
+        .on("mouseover", function (event, d) { tooltip.text(d[selectedVar]); console.log(event); tooltip.style("top", (event.clientY - 10) + "px").style("left", (event.clientX + 10) + "px"); return tooltip.style("visibility", "visible"); })
+        .on("mousemove", function (event, d) { return tooltip.style("top", (event.clientY - 10) + "px").style("left", (event.clientX + 10) + "px"); })
         .on("mouseout", function (d, event) { return tooltip.style("visibility", "hidden"); })
         .transition()
         .duration(1000)
         .attr("cx", function (d) { return x(d.name); })
         .attr("cy", function (d) { return y(d[selectedVar]); })
-        // .on('mouseover', (event, d) => console.log(d[selectedVar]))
-        // .on('mouseover', (event, d) => console.log(d[selectedVar]))
         .attr("r", 8)
 
-        .attr("fill", "#69b3a2")
-
-        ;
-
-
-    // })
-
+        .attr("fill", "#69b3a2");
 }
