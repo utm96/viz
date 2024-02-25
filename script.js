@@ -68,7 +68,7 @@ function drawTreeMap(data) {
             .attr("cursor", "pointer")
             .on("click", function (event, d) {
                 // Update the modal content
-                d3.select("#modalText").html(`Name: ${d.data.name}<br>Tasks: ${format(d.data.value)}<br>Impact: ${d.data.impact}%<br>Job Number: ${d.data.job_number}`);
+                d3.select("#modalText").html(`Name: ${d.data.name}<br>Tasks: ${format(d.data.value)}<br>Impact: ${d.data.impact}%<br>Number of jobs: ${d.data.job_number}`);
 
                 // Display the modal
                 d3.select("#infoModal").style("display", "block");
