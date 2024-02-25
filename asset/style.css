@@ -21,20 +21,6 @@
   padding: 0 20px;
 }
 
-.header-content {
-  /* put it on the image */
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: rgba(255, 255, 255, 0.838);
-  text-align: center;
-  background-color: #00000076;
-  border-radius: 20px;
-  width: 1100px;
-  padding: 40px 20px;
-}
-
 a {
   color: #848282;
   /* Example link color */
@@ -45,7 +31,7 @@ a:hover {
 }
 
 body {
-  font-family: 'Times New Roman', Times, serif;
+  font-family: 'Prompt', Times, serif;
   margin: 0;
   padding: 0;
   background-color: #f9f5f5;
@@ -87,7 +73,7 @@ body {
 .icon {
   position: absolute;
   left: 47%;
-  top: 85%;
+  top: 89%;
   cursor: pointer;
   color: #a6c58f;
 }
@@ -145,7 +131,7 @@ button:hover {
   left: 50%;
   transform: translate(-50%, -50%);
   color: rgba(255, 255, 255, 0.9); /* Adjusted transparency */
-  text-align: center;
+  /* text-align: center; */
   background-color: rgba(0, 0, 0, 0.7); /* Adjusted background color */
   border-radius: 20px;
   width: 90%;
@@ -153,23 +139,13 @@ button:hover {
   padding: 40px 20px;
 }
 
-body {
-  font-family: 'Arial', sans-serif; /* Changed font to a sans-serif for better readability */
-  margin: 0;
-  padding: 0;
-  background-color: #f9f5f5;
-}
-.info_section {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-}
 
 .info_section div {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 10px;
   cursor: pointer;
+  font-size: 0.8em;
 }
 
 .info_section div:hover p:not(:first-child) {
@@ -178,7 +154,7 @@ body {
 
 
 .research-question {
-  padding: 0px 220px;
+  padding: 0px 190px;
   justify-content: left;
   text-align: center;
 }
@@ -188,7 +164,7 @@ body {
 }
 
 .viz-container {
-  padding: 0px 220px;
+  padding: 0px 190px;
   justify-content: left;
   text-align: center;
 }
