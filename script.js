@@ -13,7 +13,7 @@ const width = 1450;
 const height = 924;
 let data_value = undefined;
 let modalData = undefined;
-const chart = d3.json("/data/data_new.json").then(data => drawTreeMap(data)).then((chart) => console.log(chart));
+const chart = d3.json("./data/data_new.json").then(data => drawTreeMap(data)).then((chart) => console.log(chart));
 
 function drawTreeMap(data) {
     data_value = data;
